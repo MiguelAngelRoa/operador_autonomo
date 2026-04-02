@@ -1,11 +1,14 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
+import * as fs from 'fs';
+import * as path from 'path';
 import { StateGraph, START, END } from "@langchain/langgraph";
 import { AgenteState } from "./state.js";
 import { nodoAnalista } from "./nodes/analista.js";
 import { nodoOperador } from "./nodes/operador.js";
-import { nodoCreativo } from "./nodes/creativo.js"
+import { nodoCreativo } from "./nodes/creativo.js";
+import { dbConnection } from "./db.js";
 
 const workflow = new StateGraph(AgenteState)
   .addNode("analista", nodoAnalista)
@@ -23,21 +26,34 @@ const workflow = new StateGraph(AgenteState)
 // Compilar el grafo
 const app = workflow.compile();
 
-import { dbConnection } from "./db.js";
+/**
+ * Guarda el estado final en outputs/resultado_<timestamp>.json
+ */
+function guardarResultado(estado: object): void {
+  const outputDir = path.resolve("outputs");
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const filePath = path.join(outputDir, `resultado_${timestamp}.json`);
+  fs.writeFileSync(filePath, JSON.stringify(estado, null, 2), "utf-8");
+  console.log(`Estado final guardado en: ${filePath}`);
+}
 
 (async () => {
-    try {
-        await dbConnection();
-        const initialState = {
-            campanias: [],
-            datos_analista: [],
-            datos_operador: [],
-            datos_creativo: []
-        };
-        const finalState = await app.invoke(initialState);
-        console.log("✅ Ejecución completada. Estado final:");
-        console.dir(finalState, { depth: null });
-    } catch (error) {
-        console.error("Error durante la ejecución del grafo:", error);
-    }
+  try {
+    await dbConnection();
+    const initialState = {
+      campanias: [],
+      datos_analista: [],
+      datos_operador: [],
+      datos_creativo: []
+    };
+    const finalState = await app.invoke(initialState);
+    console.log("Ejecución completada. Estado final:");
+    console.dir(finalState, { depth: null });
+    guardarResultado(finalState);
+  } catch (error) {
+    console.error("Error durante la ejecución del grafo:", error);
+  }
 })();

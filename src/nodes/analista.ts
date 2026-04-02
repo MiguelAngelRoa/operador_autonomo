@@ -31,19 +31,17 @@ export const nodoAnalista = async (state: typeof AgenteState.State) => {
     importantes para la toma de decisiones
 
     Datos de las campañas:
-    {campañas_data}
+    {campanias_data}
 
-    Debes devolver un array de objetos JSON con el siguiente esquema EXACTO:
-    [{{
-      "id": "ID de la campaña",
-      "roas": "Número representado como string (ej: '3.50')",
-      "es_rentable": "Booleano (true o false)",
-      "razon": "Observación de MÁXIMO 10 palabras"
-    }}]
-
-    No incluyas explicaciones adicionales fuera del JSON. Devuelve ÚNICAMENTE el bloque JSON.
+    INSTRUCCIONES DE RESPUESTA (MUY IMPORTANTE):
+    - Responde ÚNICAMENTE con un array JSON válido. Sin texto adicional, sin bloques markdown, sin backticks.
+    - El formato exacto que debes devolver es:
+    [{{"id": "C1", "roas": "3.50", "es_rentable": true, "razon": "Breve razon max 10 palabras"}}]
+    - "es_rentable" debe ser un booleano real (true o false), NO un string.
+    - "razon" debe tener MÁXIMO 10 palabras, sin comillas internas ni caracteres especiales.
+    - No uses saltos de línea dentro de los strings del JSON.
   `,
-    inputVariables: ["campañas_data"]
+    inputVariables: ["campanias_data"]
   });
 
   const parser = new JsonOutputParser();
@@ -51,7 +49,7 @@ export const nodoAnalista = async (state: typeof AgenteState.State) => {
 
   try {
     const analysisResults = await chain.invoke({
-      campañas_data: JSON.stringify(campañas, null, 2)
+      campanias_data: JSON.stringify(campañas, null, 2)
     }) as any;
 
     const analizadas = analysisResults.map((result: any) => {
