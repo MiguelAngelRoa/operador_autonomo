@@ -1,11 +1,13 @@
 {
   "name": "operador_autonomo",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "nodemon --exec \"node --no-warnings=ExperimentalWarning --env-file=.env --loader ts-node/esm\" src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -13,12 +15,19 @@
   "description": "",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@langchain/core": "^1.1.38",
+    "@langchain/google-genai": "^2.1.26",
+    "@langchain/langgraph": "^1.2.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "mysql2": "^3.20.0",
     "sequelize": "^6.37.8"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "@types/node": "^25.5.0",
+    "@types/validator": "^13.15.10",
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.2"
   }
 }
