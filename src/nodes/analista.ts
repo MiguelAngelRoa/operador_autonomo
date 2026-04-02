@@ -34,6 +34,9 @@ export const nodoAnalista = async (state: typeof AgenteState.State) => {
     {campanias_data}
 
     INSTRUCCIONES DE RESPUESTA (MUY IMPORTANTE):
+    - Tu salida debe ser exclusivamente un JSON array.
+    - NO uses markdown (sin \`\`\`json).
+    - NO uses comillas dobles dentro del campo "razon".
     - Responde ÚNICAMENTE con un array JSON válido. Sin texto adicional, sin bloques markdown, sin backticks.
     - El formato exacto que debes devolver es:
     [{{"id": "C1", "roas": "3.50", "es_rentable": true, "razon": "Breve razon max 10 palabras"}}]
